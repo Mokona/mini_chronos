@@ -1,6 +1,8 @@
 #ifndef MINICHRONOS_TIMER_H
 #define MINICHRONOS_TIMER_H
 
+#include "error_handler.h"
+
 #include <string>
 
 namespace MiniChronos
@@ -10,12 +12,13 @@ namespace MiniChronos
     class Timer
     {
     public:
-        explicit Timer(Database& db);
+        Timer(Database& db, ErrorHandler error_handler);
 
         void start(std::string&& timer_id);
 
     private:
         Database& db;
+        ErrorHandler error_handler;
     };
 }
 
