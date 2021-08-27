@@ -38,7 +38,9 @@ set(MINI_CHRONOS_LIB_NAME mini_chronos)
 set(MINI_CHRONOS_TEST_NAME ${MINI_CHRONOS_LIB_NAME}_tests)
 
 set(MINI_CHRONOS_LIB_FILES
-        src/mini_chronos.h src/mini_chronos.cpp)
+        src/mini_chronos.h src/mini_chronos.cpp
+        src/database.h src/database.cpp
+        src/timer.h src/timer.cpp)
 
 add_library(${MINI_CHRONOS_LIB_NAME} ${MINI_CHRONOS_LIB_FILES})
 
