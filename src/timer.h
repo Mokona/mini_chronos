@@ -15,6 +15,7 @@ namespace MiniChronos
         Timer(Database& db, ErrorHandler error_handler);
 
         void start(std::string&& timer_id);
+        void stop();
 
     private:
         Database& db;

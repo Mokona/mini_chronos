@@ -39,3 +39,20 @@ TEST(MiniChronos, cannot_be_initialized_twice)
 
     uninit();
 }
+
+TEST(MiniChronos, cannot_stop_when_not_started) {
+    using namespace MiniChronos;
+
+    bool error_called = false;
+
+    ErrorHandler error_handler(
+            {.fatal_error_cb = [&error_called](std::string&&) { error_called = true; }});
+    Database db;
+    init(db, error_handler);
+
+    ASSERT_FALSE(error_called);
+    stop();
+    ASSERT_TRUE(error_called);
+
+    uninit();
+}

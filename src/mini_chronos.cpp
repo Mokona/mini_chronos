@@ -24,4 +24,6 @@ namespace MiniChronos
     }
 
     void start(std::string&& timer_id) { the_one_timer->start(std::move(timer_id)); }
+
+    void stop() { the_one_timer->stop(); }
 }
