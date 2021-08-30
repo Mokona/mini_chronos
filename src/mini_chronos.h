@@ -27,6 +27,16 @@ namespace MiniChronos
             error_handler.fatal("Cannot stop a timer when none were started.");
         }
 
+        struct TimerData
+        {
+            std::chrono::nanoseconds duration;
+        };
+
+        TimerData get_timer_data(const std::string& string)
+        {
+            return TimerData{std::chrono::nanoseconds{1}};
+        }
+
     private:
         Database& db;
         ErrorHandler error_handler;

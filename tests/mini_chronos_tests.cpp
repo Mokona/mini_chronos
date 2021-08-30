@@ -93,3 +93,19 @@ TEST(MiniChronos, gets_a_timing_when_timer_stopped)
     chronos.stop();
     ASSERT_TRUE(chrono_mock::now_was_called);
 }
+
+TEST(MiniChronos, gets_data_from_a_timer)
+{
+    using namespace MiniChronos;
+
+    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
+    Database db;
+    Chronos<chrono_mock> chronos(db, error_handler);
+
+    chronos.start("timer_1");
+    chronos.stop();
+
+    auto data = chronos.get_timer_data("timer_1");
+
+    ASSERT_THAT(data.duration, Eq(std::chrono::nanoseconds{1}));
+}
