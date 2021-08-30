@@ -1,24 +1,26 @@
+#include "database.h"
 #include "error_handler.h"
+
 #include <chrono>
 #include <string>
 #include <utility>
 
 namespace MiniChronos
 {
-    class Database;
-
-    void initialize_the_one_timer(Database& db, ErrorHandler error_handler);
-
     template<typename TimeProvider>
-#if __cpp_lib_concepts
     requires std::chrono::is_clock_v<TimeProvider>
-#endif
-    void init(Database& db, ErrorHandler error_handler)
+    class Chronos
     {
-        initialize_the_one_timer(db, std::move(error_handler));
-    };
+    public:
+        Chronos(Database& db, ErrorHandler error_handler)
+            : db(db), error_handler(std::move(error_handler))
+        {}
 
-    void uninit();
-    void start(std::string&& timer_id);
-    void stop();
+        void start(std::string&& timer_id) { db.ensures_key(timer_id); }
+        void stop() { error_handler.fatal("Cannot stop a timer when none were started."); }
+
+    private:
+        Database& db;
+        ErrorHandler error_handler;
+    };
 }
