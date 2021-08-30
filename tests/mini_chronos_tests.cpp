@@ -59,14 +59,17 @@ struct chrono_mock
     static time_point now()
     {
         now_was_called = true;
-        return time_point{};
+        fake_duration += duration{1};
+        return time_point{fake_duration};
     }
     static constexpr bool is_steady = false;
 
     static bool now_was_called;
+    static duration fake_duration;
 };
 
 bool chrono_mock::now_was_called = false;
+chrono_mock::duration chrono_mock::fake_duration{0};
 
 TEST(MiniChronos, gets_a_timing_when_timer_started)
 {
