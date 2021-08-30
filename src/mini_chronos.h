@@ -16,7 +16,11 @@ namespace MiniChronos
             : db(db), error_handler(std::move(error_handler))
         {}
 
-        void start(std::string&& timer_id) { db.ensures_key(timer_id); }
+        void start(std::string&& timer_id)
+        {
+            db.ensures_key(timer_id);
+            TimeProvider::now();
+        }
         void stop() { error_handler.fatal("Cannot stop a timer when none were started."); }
 
     private:

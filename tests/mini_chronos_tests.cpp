@@ -56,9 +56,17 @@ struct chrono_mock
     typedef duration::period period;
     typedef std::chrono::time_point<chrono_mock, duration> time_point;
 
-    static constexpr time_point now() { return time_point{}; }
+    static time_point now()
+    {
+        now_was_called = true;
+        return time_point{};
+    }
     static constexpr bool is_steady = false;
+
+    static bool now_was_called;
 };
+
+bool chrono_mock::now_was_called = false;
 
 TEST(MiniChronos, gets_a_timing_when_timer_started)
 {
@@ -66,7 +74,9 @@ TEST(MiniChronos, gets_a_timing_when_timer_started)
 
     ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
     Database db;
-    Chronos<chrono_stub> chronos(db, error_handler);
+    Chronos<chrono_mock> chronos(db, error_handler);
 
+    chrono_mock::now_was_called = false;
     chronos.start("timer_1");
+    ASSERT_TRUE(chrono_mock::now_was_called);
 }
