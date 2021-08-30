@@ -21,7 +21,11 @@ namespace MiniChronos
             db.ensures_key(timer_id);
             TimeProvider::now();
         }
-        void stop() { error_handler.fatal("Cannot stop a timer when none were started."); }
+        void stop()
+        {
+            TimeProvider::now();
+            error_handler.fatal("Cannot stop a timer when none were started.");
+        }
 
     private:
         Database& db;

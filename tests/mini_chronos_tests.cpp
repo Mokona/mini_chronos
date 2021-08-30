@@ -80,3 +80,16 @@ TEST(MiniChronos, gets_a_timing_when_timer_started)
     chronos.start("timer_1");
     ASSERT_TRUE(chrono_mock::now_was_called);
 }
+
+TEST(MiniChronos, gets_a_timing_when_timer_stopped)
+{
+    using namespace MiniChronos;
+
+    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
+    Database db;
+    Chronos<chrono_mock> chronos(db, error_handler);
+
+    chrono_mock::now_was_called = false;
+    chronos.stop();
+    ASSERT_TRUE(chrono_mock::now_was_called);
+}
