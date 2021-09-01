@@ -13,28 +13,50 @@ namespace MiniChronos
         struct TimerData
         {
             std::chrono::nanoseconds duration{};
-            std::string name{"timer_1"};
+            std::string name{};
         };
 
         struct TimerIterator : public std::iterator<std::input_iterator_tag, TimerData, size_t,
                                                     const TimerData*, TimerData&>
         {
-            TimerIterator() = default;
-            explicit TimerIterator(bool is_end) : is_end(is_end){};
+            explicit TimerIterator(Database* db) : associated_db{db}, count{0} {};
+            TimerIterator(Database* db, std::size_t count) : associated_db{db}, count(count){};
+
+            TimerIterator end()
+            {
+                count = associated_db->all_paths.size();
+                return *this;
+            }
 
             TimerIterator& operator++()
             {
-                is_end = true;
+                if (count < associated_db->all_paths.size())
+                {
+                    count += 1;
+                }
                 return *this;
             };
-            TimerIterator operator++(int) { return TimerIterator{true}; };
-            bool operator==(TimerIterator other) const { return is_end == other.is_end; };
-            bool operator!=(TimerIterator other) const { return is_end != other.is_end; };
+            TimerIterator operator++(int) { return TimerIterator{associated_db, count + 1}; };
 
-            TimerData operator*() const { return {}; }
+            bool operator==(TimerIterator other) const
+            {
+                return count == other.count && associated_db == other.associated_db;
+            };
+
+            bool operator!=(TimerIterator other) const
+            {
+                return count != other.count || associated_db != other.associated_db;
+            };
+
+            TimerData operator*() const
+            {
+                return TimerData{.duration = std::chrono::nanoseconds{0},
+                                 .name = associated_db->all_paths[count]};
+            }
 
         private:
-            bool is_end{};
+            std::size_t count;
+            Database* associated_db;
         };
 
         using PathId = std::size_t;

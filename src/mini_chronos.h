@@ -12,8 +12,8 @@ namespace MiniChronos
     class Chronos
     {
     public:
-        Database::TimerIterator begin() { return Database::TimerIterator{}; }
-        Database::TimerIterator end() { return Database::TimerIterator{true}; }
+        Database::TimerIterator begin() { return Database::TimerIterator{&db}; }
+        Database::TimerIterator end() { return Database::TimerIterator{&db}.end(); }
 
         Chronos(Database& db, ErrorHandler error_handler)
             : db(db), error_handler(std::move(error_handler))
