@@ -112,3 +112,20 @@ TEST(MiniChronos, gets_data_from_a_timer)
 
     ASSERT_THAT(data.duration, Eq(std::chrono::nanoseconds{1}));
 }
+
+TEST(MiniChronos, provides_an_iterator_on_one_timer)
+{
+    using namespace MiniChronos;
+
+    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
+    Database db;
+    Chronos<chrono_mock> chronos(db, error_handler);
+
+    chronos.start("timer_1");
+    chronos.stop();
+
+    for (const auto & timer : chronos){
+        ASSERT_THAT(timer.name, Eq("timer_1"));
+    }
+
+}

@@ -12,6 +12,35 @@ namespace MiniChronos
     class Chronos
     {
     public:
+        struct TimerData
+        {
+            std::chrono::nanoseconds duration{};
+            std::string name{"timer_1"};
+        };
+
+        struct TimerIterator : public std::iterator<std::input_iterator_tag, TimerData, size_t,
+                                                    const TimerData*, TimerData&>
+        {
+            TimerIterator() = default;
+            explicit TimerIterator(bool is_end) : is_end(is_end){};
+
+            TimerIterator& operator++()
+            {
+                is_end = true;
+                return *this;
+            };
+            TimerIterator operator++(int) { return TimerIterator{true}; };
+            bool operator==(TimerIterator other) { return is_end == other.is_end; };
+            bool operator!=(TimerIterator other) { return is_end != other.is_end; };
+
+            TimerData operator*() const { return {}; }
+
+        private:
+            bool is_end{};
+        };
+        TimerIterator begin() { return TimerIterator{}; }
+        TimerIterator end() { return TimerIterator{true}; }
+
         Chronos(Database& db, ErrorHandler error_handler)
             : db(db), error_handler(std::move(error_handler))
         {}
@@ -28,11 +57,6 @@ namespace MiniChronos
             latest_duration = duration;
             error_handler.fatal("Cannot stop a timer when none were started.");
         }
-
-        struct TimerData
-        {
-            std::chrono::nanoseconds duration;
-        };
 
         TimerData get_timer_data(const std::string& string)
         {
