@@ -124,8 +124,8 @@ TEST(MiniChronos, provides_an_iterator_on_one_timer)
     chronos.start("timer_1");
     chronos.stop();
 
-    for (const auto & timer : chronos){
+    for (const auto& timer : chronos)
+    {
         ASSERT_THAT(timer.name, Eq("timer_1"));
     }
-
 }
