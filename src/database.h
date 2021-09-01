@@ -37,11 +37,18 @@ namespace MiniChronos
             bool is_end{};
         };
 
+        using PathId = std::size_t;
+        static const PathId no_path = std::numeric_limits<std::size_t>::max();
+
         bool has_path(const std::string& path);
-        std::size_t ensures_key(std::string& key);
+        PathId ensures_path(std::string& path);
+
+        void set_duration(Database::PathId, std::chrono::nanoseconds duration);
+        Database::TimerData get_timer_data();
 
     private:
         std::vector<std::string> all_paths;
+        std::chrono::nanoseconds latest_duration;
     };
 
 }

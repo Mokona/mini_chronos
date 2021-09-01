@@ -92,6 +92,7 @@ TEST(MiniChronos, gets_a_timing_when_timer_stopped)
     Database db;
     Chronos<chrono_mock> chronos(db, error_handler);
 
+    chronos.start("timer_1");
     chrono_mock::now_was_called = false;
     chronos.stop();
     ASSERT_TRUE(chrono_mock::now_was_called);

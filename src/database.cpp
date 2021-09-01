@@ -6,16 +6,26 @@ namespace MiniChronos
     {
         return std::find(begin(all_paths), end(all_paths), path) != end(all_paths);
     }
-    std::size_t Database::ensures_key(std::string& key)
+    Database::PathId Database::ensures_path(std::string& path)
     {
-        auto exists = std::find(begin(all_paths), end(all_paths), key);
+        auto exists = std::find(begin(all_paths), end(all_paths), path);
 
         if (exists == end(all_paths))
         {
-            all_paths.push_back(key);
+            all_paths.push_back(path);
             return all_paths.size() - 1;
         }
 
         return std::distance(begin(all_paths), exists);
+    }
+
+    Database::TimerData Database::get_timer_data()
+    {
+        return TimerData{std::chrono::nanoseconds{latest_duration}};
+    }
+
+    void Database::set_duration(Database::PathId, std::chrono::nanoseconds duration)
+    {
+        latest_duration = duration;
     }
 }

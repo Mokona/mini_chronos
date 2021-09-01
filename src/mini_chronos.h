@@ -21,27 +21,32 @@ namespace MiniChronos
 
         void start(std::string&& timer_id)
         {
-            db.ensures_key(timer_id);
+            current_path = db.ensures_path(timer_id);
             timer_start = TimeProvider::now();
         }
         void stop()
         {
+            if (current_path == Database::no_path)
+            {
+                error_handler.fatal("Cannot stop a timer when none were started.");
+                return;
+            }
             auto timer_stop = TimeProvider::now();
             const auto duration = duration_cast<std::chrono::nanoseconds>(timer_stop - timer_start);
-            latest_duration = duration;
-            error_handler.fatal("Cannot stop a timer when none were started.");
+            db.set_duration(current_path, duration);
+            current_path = Database::no_path;
         }
 
         Database::TimerData get_timer_data(const std::string& string)
         {
-            return Database::TimerData{std::chrono::nanoseconds{latest_duration.count()}};
+            return db.get_timer_data();
         }
 
     private:
         Database& db;
         ErrorHandler error_handler;
+        Database::PathId current_path{Database::no_path};
 
         typename TimeProvider::time_point timer_start;
-        typename TimeProvider::duration latest_duration;
     };
 }
