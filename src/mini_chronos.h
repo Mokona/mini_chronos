@@ -44,8 +44,8 @@ namespace MiniChronos
 
     private:
         Database& db;
-        ErrorHandler error_handler;
         Database::PathId current_path{Database::no_path};
+        ErrorHandler error_handler;
 
         typename TimeProvider::time_point timer_start;
     };

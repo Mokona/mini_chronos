@@ -55,8 +55,8 @@ namespace MiniChronos
             }
 
         private:
-            std::size_t count;
             Database* associated_db;
+            std::size_t count;
         };
 
         using PathId = std::size_t;
