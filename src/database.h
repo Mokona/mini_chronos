@@ -50,7 +50,7 @@ namespace MiniChronos
 
             TimerData operator*() const
             {
-                return TimerData{.duration = std::chrono::nanoseconds{0},
+                return TimerData{.duration = associated_db->all_durations[count],
                                  .name = associated_db->all_paths[count]};
             }
 
@@ -66,11 +66,11 @@ namespace MiniChronos
         PathId ensures_path(std::string& path);
 
         void set_duration(Database::PathId, std::chrono::nanoseconds duration);
-        Database::TimerData get_timer_data();
+        Database::TimerData get_timer_data(const std::string& path);
 
     private:
         std::vector<std::string> all_paths;
-        std::chrono::nanoseconds latest_duration;
+        std::vector<std::chrono::nanoseconds> all_durations;
     };
 
 }

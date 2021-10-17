@@ -111,6 +111,7 @@ TEST(MiniChronos, gets_data_from_a_timer)
 
     auto data = chronos.get_timer_data("timer_1");
 
+    ASSERT_THAT(data.name, Eq("timer_1"));
     ASSERT_THAT(data.duration, Eq(std::chrono::nanoseconds{1}));
 }
 
@@ -149,5 +150,7 @@ TEST(MiniChronos, provides_an_iterator_on_two_timers)
 
     ASSERT_THAT(timers.size(), Eq(2));
     ASSERT_THAT(timers[0].name, Eq("timer_1"));
+    ASSERT_THAT(timers[0].duration, Eq(std::chrono::nanoseconds{1}));
     ASSERT_THAT(timers[1].name, Eq("timer_2"));
+    ASSERT_THAT(timers[1].duration, Eq(std::chrono::nanoseconds{1}));
 }

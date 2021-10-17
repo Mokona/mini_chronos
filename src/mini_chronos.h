@@ -37,9 +37,9 @@ namespace MiniChronos
             current_path = Database::no_path;
         }
 
-        Database::TimerData get_timer_data(const std::string& string)
+        Database::TimerData get_timer_data(const std::string& path)
         {
-            return db.get_timer_data();
+            return db.get_timer_data(path);
         }
 
     private:
