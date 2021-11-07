@@ -154,3 +154,26 @@ TEST(MiniChronos, provides_an_iterator_on_two_timers)
     ASSERT_THAT(timers[1].name, Eq("timer_2"));
     ASSERT_THAT(timers[1].duration, Eq(std::chrono::nanoseconds{1}));
 }
+
+TEST(MiniChronos, creates_a_hierarchy_of_timers)
+{
+    using namespace MiniChronos;
+
+    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
+    Database db;
+    Chronos<chrono_mock> chronos(db, error_handler);
+
+    chronos.start("timer_1");
+    chronos.start("timer_2");
+    chronos.stop();
+    chronos.stop();
+
+    std::vector<Database::TimerData> timers;
+    std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
+
+    ASSERT_THAT(timers.size(), Eq(2));
+    //ASSERT_THAT(timers[0].name, Eq("timer_1"));
+    //ASSERT_THAT(timers[0].duration, Eq(std::chrono::nanoseconds{1}));
+    //ASSERT_THAT(timers[1].name, Eq("timer_1::timer_2"));
+    //ASSERT_THAT(timers[1].duration, Eq(std::chrono::nanoseconds{1}));
+}
