@@ -71,6 +71,8 @@ namespace MiniChronos
     private:
         std::vector<std::string> all_paths;
         std::vector<std::chrono::nanoseconds> all_durations;
+
+        std::string construct_path(PathId root_id, std::string& path);
     };
 
 }

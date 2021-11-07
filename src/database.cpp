@@ -11,11 +11,12 @@ namespace MiniChronos
 
     Database::PathId Database::ensures_path(Database::PathId base_path, std::string& path)
     {
-        auto exists = std::find(begin(all_paths), end(all_paths), path);
+        auto full_path = construct_path(base_path, path);
+        auto exists = std::find(begin(all_paths), end(all_paths), full_path);
 
         if (exists == end(all_paths))
         {
-            all_paths.push_back(path);
+            all_paths.push_back(full_path);
             all_durations.resize(all_paths.size());
             return all_paths.size() - 1;
         }
@@ -34,5 +35,15 @@ namespace MiniChronos
     {
         assert(id < all_durations.size());
         all_durations[id] = duration;
+    }
+
+    std::string Database::construct_path(PathId root_id, std::string& path)
+    {
+        if (root_id == no_path)
+        {
+            return path;
+        }
+        assert(root_id < all_paths.size());
+        return all_paths[root_id] + "::" + path;
     }
 }

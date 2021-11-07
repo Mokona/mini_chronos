@@ -172,8 +172,8 @@ TEST(MiniChronos, creates_a_hierarchy_of_timers)
     std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
 
     ASSERT_THAT(timers.size(), Eq(2));
-    //ASSERT_THAT(timers[0].name, Eq("timer_1"));
+    ASSERT_THAT(timers[0].name, Eq("timer_1"));
     //ASSERT_THAT(timers[0].duration, Eq(std::chrono::nanoseconds{1}));
-    //ASSERT_THAT(timers[1].name, Eq("timer_1::timer_2"));
+    ASSERT_THAT(timers[1].name, Eq("timer_1::timer_2"));
     //ASSERT_THAT(timers[1].duration, Eq(std::chrono::nanoseconds{1}));
 }
