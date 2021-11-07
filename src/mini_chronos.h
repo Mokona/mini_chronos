@@ -21,7 +21,7 @@ namespace MiniChronos
 
         void start(std::string&& timer_id)
         {
-            current_path = db.ensures_path(timer_id);
+            current_path = db.ensures_path(Database::no_path, timer_id);
             timer_start = TimeProvider::now();
         }
         void stop()

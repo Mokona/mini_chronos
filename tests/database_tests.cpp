@@ -18,8 +18,9 @@ TEST(Database, registers_path)
     MiniChronos::Database db{};
 
     std::string pathname{"path_1"};
-    auto id = db.ensures_path(pathname);
+    auto id = db.ensures_path(MiniChronos::Database::no_path, pathname);
 
     ASSERT_THAT(id, Ne(MiniChronos::Database::no_path));
     ASSERT_THAT(db.has_path(pathname), IsTrue());
 }
+

@@ -9,7 +9,7 @@ namespace MiniChronos
         return std::find(begin(all_paths), end(all_paths), path) != end(all_paths);
     }
 
-    Database::PathId Database::ensures_path(std::string& path)
+    Database::PathId Database::ensures_path(Database::PathId base_path, std::string& path)
     {
         auto exists = std::find(begin(all_paths), end(all_paths), path);
 
