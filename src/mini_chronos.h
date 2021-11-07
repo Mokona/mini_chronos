@@ -1,6 +1,7 @@
 #include "database.h"
 #include "error_handler.h"
 
+#include <cassert>
 #include <chrono>
 #include <string>
 #include <utility>
@@ -12,29 +13,44 @@ namespace MiniChronos
     class Chronos
     {
     public:
+        using TimePoint = typename TimeProvider::time_point;
+
         Database::TimerIterator begin() { return Database::TimerIterator{&db}; }
         Database::TimerIterator end() { return Database::TimerIterator{&db}.end(); }
 
         Chronos(Database& db, ErrorHandler error_handler)
             : db(db), error_handler(std::move(error_handler))
-        {}
+        {
+            const auto no_path = Database::no_path;
+            path_stack.push_back(no_path);
+        }
 
         void start(std::string&& timer_id)
         {
-            current_path = db.ensures_path(current_path, timer_id);
-            timer_start = TimeProvider::now();
+            auto new_path = db.ensures_path(current_path(), timer_id);
+            push_path(new_path);
+
+            // Based on the fact that current_path is an index in another table... not really good.
+            if (current_path() >= timer_start_points.size())
+            {
+                timer_start_points.resize(current_path() + 1);
+            }
+            timer_start_points[current_path()] = TimeProvider::now();
         }
+
         void stop()
         {
-            if (current_path == Database::no_path)
+            if (current_path() == Database::no_path)
             {
                 error_handler.fatal("Cannot stop a timer when none were started.");
                 return;
             }
             auto timer_stop = TimeProvider::now();
+            auto timer_start = timer_start_points[current_path()];
             const auto duration = duration_cast<std::chrono::nanoseconds>(timer_stop - timer_start);
-            db.set_duration(current_path, duration);
-            current_path = Database::no_path;
+            db.set_duration(current_path(), duration);
+
+            pop_path();
         }
 
         Database::TimerData get_timer_data(const std::string& path)
@@ -42,11 +58,23 @@ namespace MiniChronos
             return db.get_timer_data(path);
         }
 
+        [[nodiscard]] Database::PathId current_path() const
+        {
+            assert(!path_stack.empty());
+            return path_stack.back();
+        }
+
     private:
         Database& db;
-        Database::PathId current_path{Database::no_path};
         ErrorHandler error_handler;
+        std::vector<TimePoint> timer_start_points;
+        std::vector<Database::PathId> path_stack;
 
-        typename TimeProvider::time_point timer_start;
+        void push_path(Database::PathId path) { path_stack.push_back(path); }
+        void pop_path()
+        {
+            path_stack.pop_back();
+            assert(!path_stack.empty());
+        }
     };
 }

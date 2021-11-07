@@ -172,8 +172,12 @@ TEST(MiniChronos, creates_a_hierarchy_of_timers)
     std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
 
     ASSERT_THAT(timers.size(), Eq(2));
+
+    // now() on the mock timer will be called 3 times.
     ASSERT_THAT(timers[0].name, Eq("timer_1"));
-    //ASSERT_THAT(timers[0].duration, Eq(std::chrono::nanoseconds{1}));
+    ASSERT_THAT(timers[0].duration, Eq(std::chrono::nanoseconds{3}));
+
+    // now() on the mock timer will be called 1 time.
     ASSERT_THAT(timers[1].name, Eq("timer_1::timer_2"));
-    //ASSERT_THAT(timers[1].duration, Eq(std::chrono::nanoseconds{1}));
+    ASSERT_THAT(timers[1].duration, Eq(std::chrono::nanoseconds{1}));
 }
