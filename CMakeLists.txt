@@ -60,7 +60,6 @@ if(IS_MAIN_PROJECT)
             tests/database_tests.cpp)
 
     add_executable(${MINI_CHRONOS_TEST_NAME} ${MINI_CHRONOS_TEST_FILES})
-    target_include_directories(${MINI_CHRONOS_TEST_NAME} PRIVATE src/)
     target_link_libraries(${MINI_CHRONOS_TEST_NAME}
             PRIVATE
             ${MINI_CHRONOS_LIB_NAME}
