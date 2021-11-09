@@ -8,47 +8,6 @@
 
 using namespace testing;
 
-struct chrono_stub
-{
-    typedef std::chrono::nanoseconds duration;
-    typedef duration::rep rep;
-    typedef duration::period period;
-    typedef std::chrono::time_point<chrono_stub, duration> time_point;
-
-    static constexpr time_point now() { return time_point{}; }
-    static constexpr bool is_steady = false;
-};
-
-TEST(MiniChronos, start_a_timer_references_it_in_the_db)
-{
-    using namespace MiniChronos;
-
-    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
-    Database db;
-
-    Chronos<chrono_stub> chronos(db, error_handler);
-    chronos.start("timer_1");
-
-    ASSERT_TRUE(db.has_path("timer_1"));
-    ASSERT_FALSE(db.has_path("timer_2"));
-}
-
-TEST(MiniChronos, cannot_stop_when_not_started)
-{
-    using namespace MiniChronos;
-
-    bool error_called = false;
-
-    ErrorHandler error_handler(
-            {.fatal_error_cb = [&error_called](std::string&&) { error_called = true; }});
-    Database db;
-    Chronos<chrono_stub> chronos(db, error_handler);
-
-    ASSERT_FALSE(error_called);
-    chronos.stop();
-    ASSERT_TRUE(error_called);
-}
-
 struct chrono_mock
 {
     typedef std::chrono::nanoseconds duration;
@@ -71,41 +30,61 @@ struct chrono_mock
 bool chrono_mock::now_was_called = false;
 chrono_mock::duration chrono_mock::fake_duration{0};
 
-TEST(MiniChronos, gets_a_timing_when_timer_started)
+struct SimpleMiniChronos : public testing::Test
+{
+protected:
+public:
+    SimpleMiniChronos()
+        : error_handler{{.fatal_error_cb = [](std::string&&) {}}}, chronos{db, error_handler}
+    {}
+
+protected:
+    MiniChronos::ErrorHandler error_handler;
+    MiniChronos::Database db;
+    MiniChronos::Chronos<chrono_mock> chronos;
+};
+
+TEST_F(SimpleMiniChronos, start_a_timer_references_it_in_the_db)
+{
+    chronos.start("timer_1");
+
+    ASSERT_TRUE(db.has_path("timer_1"));
+    ASSERT_FALSE(db.has_path("timer_2"));
+}
+
+TEST(MiniChronos, cannot_stop_when_not_started)
 {
     using namespace MiniChronos;
 
-    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
+    bool error_called = false;
+
+    ErrorHandler error_handler(
+            {.fatal_error_cb = [&error_called](std::string&&) { error_called = true; }});
     Database db;
     Chronos<chrono_mock> chronos(db, error_handler);
 
+    ASSERT_FALSE(error_called);
+    chronos.stop();
+    ASSERT_TRUE(error_called);
+}
+
+TEST_F(SimpleMiniChronos, gets_a_timing_when_timer_started)
+{
     chrono_mock::now_was_called = false;
     chronos.start("timer_1");
     ASSERT_TRUE(chrono_mock::now_was_called);
 }
 
-TEST(MiniChronos, gets_a_timing_when_timer_stopped)
+TEST_F(SimpleMiniChronos, gets_a_timing_when_timer_stopped)
 {
-    using namespace MiniChronos;
-
-    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
-    Database db;
-    Chronos<chrono_mock> chronos(db, error_handler);
-
     chronos.start("timer_1");
     chrono_mock::now_was_called = false;
     chronos.stop();
     ASSERT_TRUE(chrono_mock::now_was_called);
 }
 
-TEST(MiniChronos, gets_data_from_a_timer)
+TEST_F(SimpleMiniChronos, gets_data_from_a_timer)
 {
-    using namespace MiniChronos;
-
-    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
-    Database db;
-    Chronos<chrono_mock> chronos(db, error_handler);
-
     chronos.start("timer_1");
     chronos.stop();
 
@@ -115,14 +94,8 @@ TEST(MiniChronos, gets_data_from_a_timer)
     ASSERT_THAT(data.duration, Eq(std::chrono::nanoseconds{1}));
 }
 
-TEST(MiniChronos, provides_an_iterator_on_one_timer)
+TEST_F(SimpleMiniChronos, provides_an_iterator_on_one_timer)
 {
-    using namespace MiniChronos;
-
-    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
-    Database db;
-    Chronos<chrono_mock> chronos(db, error_handler);
-
     chronos.start("timer_1");
     chronos.stop();
 
@@ -132,20 +105,14 @@ TEST(MiniChronos, provides_an_iterator_on_one_timer)
     }
 }
 
-TEST(MiniChronos, provides_an_iterator_on_two_timers)
+TEST_F(SimpleMiniChronos, provides_an_iterator_on_two_timers)
 {
-    using namespace MiniChronos;
-
-    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
-    Database db;
-    Chronos<chrono_mock> chronos(db, error_handler);
-
     chronos.start("timer_1");
     chronos.stop();
     chronos.start("timer_2");
     chronos.stop();
 
-    std::vector<Database::TimerData> timers;
+    std::vector<MiniChronos::Database::TimerData> timers;
     std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
 
     ASSERT_THAT(timers.size(), Eq(2));
@@ -155,20 +122,14 @@ TEST(MiniChronos, provides_an_iterator_on_two_timers)
     ASSERT_THAT(timers[1].duration, Eq(std::chrono::nanoseconds{1}));
 }
 
-TEST(MiniChronos, creates_a_hierarchy_of_timers)
+TEST_F(SimpleMiniChronos, creates_a_hierarchy_of_timers)
 {
-    using namespace MiniChronos;
-
-    ErrorHandler error_handler({.fatal_error_cb = [](std::string&&) {}});
-    Database db;
-    Chronos<chrono_mock> chronos(db, error_handler);
-
     chronos.start("timer_1");
     chronos.start("timer_2");
     chronos.stop();
     chronos.stop();
 
-    std::vector<Database::TimerData> timers;
+    std::vector<MiniChronos::Database::TimerData> timers;
     std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
 
     ASSERT_THAT(timers.size(), Eq(2));
@@ -181,3 +142,9 @@ TEST(MiniChronos, creates_a_hierarchy_of_timers)
     ASSERT_THAT(timers[1].name, Eq("timer_1::timer_2"));
     ASSERT_THAT(timers[1].duration, Eq(std::chrono::nanoseconds{1}));
 }
+
+TEST_F(SimpleMiniChronos, accumulates_time_from_calls) {}
+
+TEST_F(SimpleMiniChronos, count_number_of_calls) {}
+
+TEST_F(SimpleMiniChronos, can_reset_calls_and_time_accumulation) {}
