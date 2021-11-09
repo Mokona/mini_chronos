@@ -31,6 +31,13 @@ namespace MiniChronos
         return TimerData{all_durations[position], all_paths[position]};
     }
 
+    Database::TimerData Database::get_timer_data(Database::PathId path_id)
+    {
+        assert(path_id < all_durations.size());
+        return TimerData{all_durations[path_id], all_paths[path_id]};
+    }
+
+
     void Database::set_duration(Database::PathId id, std::chrono::nanoseconds duration)
     {
         assert(id < all_durations.size());

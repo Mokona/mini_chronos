@@ -67,6 +67,7 @@ namespace MiniChronos
 
         void set_duration(Database::PathId, std::chrono::nanoseconds duration);
         Database::TimerData get_timer_data(const std::string& path);
+        Database::TimerData get_timer_data(Database::PathId path_id);
 
     private:
         std::vector<std::string> all_paths;

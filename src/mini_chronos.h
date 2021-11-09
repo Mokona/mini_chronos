@@ -47,10 +47,18 @@ namespace MiniChronos
             }
             auto timer_stop = TimeProvider::now();
             auto timer_start = timer_start_points[current_path()];
-            const auto duration = duration_cast<std::chrono::nanoseconds>(timer_stop - timer_start);
-            db.set_duration(current_path(), duration);
+
+            update_current_path(timer_start, timer_stop);
 
             pop_path();
+        }
+
+        void update_current_path(TimePoint start, TimePoint stop)
+        {
+            const auto duration = duration_cast<std::chrono::nanoseconds>(stop - start);
+            const auto current_duration = db.get_timer_data(current_path()).duration;
+            const auto new_duration = current_duration + duration;
+            db.set_duration(current_path(), new_duration);
         }
 
         Database::TimerData get_timer_data(const std::string& path)
