@@ -158,6 +158,17 @@ TEST_F(SimpleMiniChronos, accumulates_time_from_calls)
     ASSERT_THAT(timers[0].duration, Eq(std::chrono::nanoseconds{2}));
 }
 
-TEST_F(SimpleMiniChronos, count_number_of_calls) {}
+TEST_F(SimpleMiniChronos, count_number_of_calls)
+{
+    chronos.start("timer_1");
+    chronos.stop();
+
+    std::vector<MiniChronos::Database::TimerData> timers;
+    std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
+
+    ASSERT_THAT(timers.size(), Eq(1));
+    ASSERT_THAT(timers[0].name, Eq("timer_1"));
+    ASSERT_THAT(timers[0].calls, Eq(1));
+}
 
 TEST_F(SimpleMiniChronos, can_reset_calls_and_time_accumulation) {}

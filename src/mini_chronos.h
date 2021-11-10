@@ -59,6 +59,7 @@ namespace MiniChronos
             const auto current_duration = db.get_timer_data(current_path()).duration;
             const auto new_duration = current_duration + duration;
             db.set_duration(current_path(), new_duration);
+            db.inc_call_count(current_path());
         }
 
         Database::TimerData get_timer_data(const std::string& path)

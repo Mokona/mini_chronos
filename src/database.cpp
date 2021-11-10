@@ -18,6 +18,7 @@ namespace MiniChronos
         {
             all_paths.push_back(full_path);
             all_durations.resize(all_paths.size());
+            all_calls.resize(all_paths.size());
             return all_paths.size() - 1;
         }
 
@@ -28,20 +29,25 @@ namespace MiniChronos
     {
         auto it = std::find(begin(all_paths), end(all_paths), path);
         auto position = std::distance(begin(all_paths), it);
-        return TimerData{all_durations[position], all_paths[position]};
+        return TimerData{all_durations[position], 0, all_paths[position]};
     }
 
     Database::TimerData Database::get_timer_data(Database::PathId path_id)
     {
         assert(path_id < all_durations.size());
-        return TimerData{all_durations[path_id], all_paths[path_id]};
+        return TimerData{all_durations[path_id], 0, all_paths[path_id]};
     }
-
 
     void Database::set_duration(Database::PathId id, std::chrono::nanoseconds duration)
     {
         assert(id < all_durations.size());
         all_durations[id] = duration;
+    }
+
+    void Database::inc_call_count(Database::PathId id)
+    {
+        assert(id < all_calls.size());
+        all_calls[id] += 1;
     }
 
     std::string Database::construct_path(PathId root_id, std::string& path)
