@@ -72,6 +72,8 @@ namespace MiniChronos
         Database::TimerData get_timer_data(const std::string& path);
         Database::TimerData get_timer_data(Database::PathId path_id);
 
+        void reset();
+
     private:
         std::vector<std::string> all_paths;
         std::vector<uint32_t> all_calls;

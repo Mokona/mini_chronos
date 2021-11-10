@@ -53,6 +53,17 @@ namespace MiniChronos
             pop_path();
         }
 
+        void reset()
+        {
+            if (current_path() != Database::no_path)
+            {
+                error_handler.fatal("Cannot reset. There are still running timers.");
+                return;
+            }
+
+            db.reset();
+        }
+
         void update_current_path(TimePoint start, TimePoint stop)
         {
             const auto duration = duration_cast<std::chrono::nanoseconds>(stop - start);

@@ -59,4 +59,10 @@ namespace MiniChronos
         assert(root_id < all_paths.size());
         return all_paths[root_id] + "::" + path;
     }
+
+    void Database::reset()
+    {
+        std::fill(std::begin(all_durations), std::end(all_durations), std::chrono::nanoseconds{});
+        std::fill(std::begin(all_calls), std::end(all_calls), 0);
+    }
 }
