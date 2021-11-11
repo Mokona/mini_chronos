@@ -74,4 +74,9 @@ namespace MiniChronos
         std::ranges::fill(all_durations, std::chrono::nanoseconds{});
         std::ranges::fill(all_calls, 0);
     }
+
+    bool Database::is_path_valid(Database::PathId path_id) const
+    {
+        return path_id < all_paths.size();
+    }
 }

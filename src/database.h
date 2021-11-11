@@ -2,7 +2,6 @@
 #define MINICHRONOS_DATABASE_H
 
 #include <chrono>
-#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -73,10 +72,13 @@ namespace MiniChronos
         [[nodiscard]] bool has_path(const std::string& path) const;
         PathId ensures_path(PathId base_path, const std::string& path);
 
+        [[nodiscard]] bool is_path_valid(Database::PathId path_id) const;
+
         void set_duration(PathId, std::chrono::nanoseconds duration);
         void inc_call_count(PathId id);
         [[nodiscard]] TimerData get_timer_data(const std::string& path) const;
         [[nodiscard]] TimerData get_timer_data(PathId path_id) const;
+
 
         void reset();
 

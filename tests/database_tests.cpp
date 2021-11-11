@@ -33,6 +33,7 @@ TEST(Database, registers_path)
 
     ASSERT_THAT(id, Ne(MiniChronos::Database::no_path));
     ASSERT_THAT(db.has_path(pathname), IsTrue());
+    ASSERT_THAT(db.is_path_valid(id), IsTrue());
 }
 
 TEST(Database, get_timer_data_throws_on_unknown_path)
