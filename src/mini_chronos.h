@@ -1,5 +1,5 @@
-#ifndef MINI_CHRONOS_H
-#define MINI_CHRONOS_H
+#ifndef MINICHRONOS_MINI_CHRONOS_H
+#define MINICHRONOS_MINI_CHRONOS_H
 
 #include "database.h"
 #include "error_handler.h"
@@ -28,7 +28,7 @@ namespace MiniChronos
             path_stack.push_back(no_path);
         }
 
-        void start(const std::string& timer_id)
+        Database::PathId create_path(const std::string& timer_id)
         {
             const auto new_path = db.ensures_path(current_path(), timer_id);
             push_path(new_path);
@@ -39,6 +39,13 @@ namespace MiniChronos
             {
                 timer_start_points.resize(current_path() + 1);
             }
+
+            return current_path();
+        }
+
+        void start(const std::string& timer_id)
+        {
+            create_path(timer_id);
             timer_start_points[current_path()] = TimeProvider::now();
         }
 
@@ -57,7 +64,7 @@ namespace MiniChronos
             pop_path();
         }
 
-        void reset() const
+        void reset()
         {
             if (current_path() != Database::no_path)
             {
@@ -104,4 +111,4 @@ namespace MiniChronos
     };
 }
 
-#endif // MINI_CHRONOS_H
+#endif // MINICHRONOS_MINI_CHRONOS_H

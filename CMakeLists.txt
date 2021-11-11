@@ -49,7 +49,8 @@ set(MINI_CHRONOS_LIB_NAME mini_chronos)
 set(MINI_CHRONOS_LIB_FILES
         src/mini_chronos.h
         src/database.h src/database.cpp
-        src/error_handler.h src/error_handler.cpp)
+        src/error_handler.h src/error_handler.cpp
+        src/timer.cpp src/timer.h)
 
 add_library(${MINI_CHRONOS_LIB_NAME} ${MINI_CHRONOS_LIB_FILES})
 target_include_directories(${MINI_CHRONOS_LIB_NAME} INTERFACE src/)
@@ -59,9 +60,12 @@ if(IS_MAIN_PROJECT)
 
     set(MINI_CHRONOS_TEST_FILES
             tests/mini_chronos_tests.cpp
-            tests/database_tests.cpp)
+            tests/database_tests.cpp
+            tests/timer_tests.cpp
+            tests/mini_chronos_mock.h tests/mini_chronos_mock.cpp)
 
     add_executable(${MINI_CHRONOS_TEST_NAME} ${MINI_CHRONOS_TEST_FILES})
+    target_include_directories(${MINI_CHRONOS_TEST_NAME} PRIVATE src/tests/)
     target_link_libraries(${MINI_CHRONOS_TEST_NAME}
             PRIVATE
             ${MINI_CHRONOS_LIB_NAME}
