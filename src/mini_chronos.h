@@ -49,6 +49,12 @@ namespace MiniChronos
             timer_start_points[current_path()] = TimeProvider::now();
         }
 
+        void start(Database::PathId path_id)
+        {
+            assert(db.is_path_valid(path_id));
+            timer_start_points[path_id] = TimeProvider::now();
+        }
+
         void stop()
         {
             if (current_path() == Database::no_path)
@@ -56,12 +62,18 @@ namespace MiniChronos
                 error_handler.fatal("Cannot stop a timer when none were started.");
                 return;
             }
+            stop(current_path());
+
+            pop_path();
+        }
+
+        void stop(Database::PathId path_id)
+        {
+            assert(db.is_path_valid(path_id));
             auto timer_stop = TimeProvider::now();
             auto timer_start = timer_start_points[current_path()];
 
             update_current_path(timer_start, timer_stop);
-
-            pop_path();
         }
 
         void reset()
