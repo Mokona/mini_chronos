@@ -30,7 +30,8 @@ namespace MiniChronos
             auto new_path = db.ensures_path(current_path(), timer_id);
             push_path(new_path);
 
-            // Based on the fact that current_path is an index in another table... not really good.
+            // time_start_points is a dense vector as path ids are consecutive
+            // and paths are never removed.
             if (current_path() >= timer_start_points.size())
             {
                 timer_start_points.resize(current_path() + 1);
