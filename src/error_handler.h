@@ -16,7 +16,7 @@ namespace MiniChronos
 
         explicit ErrorHandler(Init init);
 
-        void fatal(std::string && reason);
+        void fatal(std::string reason);
 
     private:
         Init handlers;

@@ -61,6 +61,19 @@ TEST_F(SimpleMiniChronos, start_a_timer_references_it_in_the_db)
     ASSERT_FALSE(db.has_path("timer_2"));
 }
 
+TEST(MiniChronos, fatal_accepts_lvalue_string)
+{
+    using namespace MiniChronos;
+
+    bool error_called = false;
+    ErrorHandler handler{{.fatal_error_cb = [&error_called](std::string&&) { error_called = true; }}};
+
+    std::string reason{"error message"};
+    handler.fatal(reason);
+
+    ASSERT_TRUE(error_called);
+}
+
 TEST(MiniChronos, cannot_stop_when_not_started)
 {
     using namespace MiniChronos;
