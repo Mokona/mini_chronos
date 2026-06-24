@@ -64,15 +64,6 @@ namespace MiniChronos
             db.reset();
         }
 
-        void update_current_path(TimePoint start, TimePoint stop)
-        {
-            const auto duration = duration_cast<std::chrono::nanoseconds>(stop - start);
-            const auto current_duration = db.get_timer_data(current_path()).duration;
-            const auto new_duration = current_duration + duration;
-            db.set_duration(current_path(), new_duration);
-            db.inc_call_count(current_path());
-        }
-
         Database::TimerData get_timer_data(const std::string& path)
         {
             return db.get_timer_data(path);
@@ -89,6 +80,15 @@ namespace MiniChronos
         ErrorHandler error_handler;
         std::vector<TimePoint> timer_start_points;
         std::vector<Database::PathId> path_stack;
+
+        void update_current_path(TimePoint start, TimePoint stop)
+        {
+            const auto duration = duration_cast<std::chrono::nanoseconds>(stop - start);
+            const auto current_duration = db.get_timer_data(current_path()).duration;
+            const auto new_duration = current_duration + duration;
+            db.set_duration(current_path(), new_duration);
+            db.inc_call_count(current_path());
+        }
 
         void push_path(Database::PathId path) { path_stack.push_back(path); }
         void pop_path()
