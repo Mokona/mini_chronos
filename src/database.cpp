@@ -1,6 +1,7 @@
 #include "database.h"
 
 #include <cassert>
+#include <stdexcept>
 
 namespace MiniChronos
 {
@@ -28,6 +29,10 @@ namespace MiniChronos
     Database::TimerData Database::get_timer_data(const std::string& path)
     {
         auto it = std::find(begin(all_paths), end(all_paths), path);
+        if (it == end(all_paths))
+        {
+            throw std::out_of_range("get_timer_data: unknown path '" + path + "'");
+        }
         auto position = std::distance(begin(all_paths), it);
         return TimerData{all_durations[position], 0, all_paths[position]};
     }
