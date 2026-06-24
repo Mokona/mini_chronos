@@ -16,7 +16,7 @@ namespace MiniChronos
     class Chronos
     {
     public:
-        using TimePoint = typename TimeProvider::time_point;
+        using TimePoint = TimeProvider::time_point;
 
         [[nodiscard]] Database::TimerIterator begin() const { return Database::TimerIterator{&db}; }
         [[nodiscard]] Database::TimerIterator end() const { return Database::TimerIterator{&db}.end(); }

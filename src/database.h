@@ -76,7 +76,7 @@ namespace MiniChronos
         void set_duration(PathId, std::chrono::nanoseconds duration);
         void inc_call_count(PathId id);
         [[nodiscard]] TimerData get_timer_data(const std::string& path) const;
-        [[nodiscard]] TimerData get_timer_data(Database::PathId path_id) const;
+        [[nodiscard]] TimerData get_timer_data(PathId path_id) const;
 
         void reset();
 
