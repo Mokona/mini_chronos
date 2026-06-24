@@ -25,7 +25,7 @@ namespace MiniChronos
             path_stack.push_back(no_path);
         }
 
-        void start(std::string&& timer_id)
+        void start(std::string timer_id)
         {
             auto new_path = db.ensures_path(current_path(), timer_id);
             push_path(new_path);

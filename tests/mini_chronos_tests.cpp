@@ -44,6 +44,15 @@ protected:
     MiniChronos::Chronos<chrono_mock> chronos;
 };
 
+TEST_F(SimpleMiniChronos, start_accepts_lvalue_string)
+{
+    std::string name{"timer_1"};
+    chronos.start(name);
+    chronos.stop();
+
+    ASSERT_TRUE(db.has_path("timer_1"));
+}
+
 TEST_F(SimpleMiniChronos, start_a_timer_references_it_in_the_db)
 {
     chronos.start("timer_1");
