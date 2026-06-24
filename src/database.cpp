@@ -10,7 +10,7 @@ namespace MiniChronos
         return std::find(begin(all_paths), end(all_paths), path) != end(all_paths);
     }
 
-    Database::PathId Database::ensures_path(Database::PathId base_path, std::string& path)
+    Database::PathId Database::ensures_path(Database::PathId base_path, const std::string& path)
     {
         auto full_path = construct_path(base_path, path);
         auto exists = std::find(begin(all_paths), end(all_paths), full_path);
@@ -55,7 +55,7 @@ namespace MiniChronos
         all_calls[id] += 1;
     }
 
-    std::string Database::construct_path(PathId root_id, std::string& path)
+    std::string Database::construct_path(PathId root_id, const std::string& path)
     {
         if (root_id == no_path)
         {

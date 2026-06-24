@@ -13,6 +13,17 @@ TEST(Database, has_no_initial_path)
     ASSERT_THAT(db.has_path(pathname), IsFalse());
 }
 
+TEST(Database, ensures_path_accepts_const_string)
+{
+    MiniChronos::Database db{};
+
+    const std::string pathname{"path_1"};
+    auto id = db.ensures_path(MiniChronos::Database::no_path, pathname);
+
+    ASSERT_THAT(id, Ne(MiniChronos::Database::no_path));
+    ASSERT_THAT(db.has_path(pathname), IsTrue());
+}
+
 TEST(Database, registers_path)
 {
     MiniChronos::Database db{};
