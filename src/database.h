@@ -2,6 +2,7 @@
 #define MINICHRONOS_DATABASE_H
 
 #include <chrono>
+#include <cstdint>
 #include <string>
 #include <vector>
 
