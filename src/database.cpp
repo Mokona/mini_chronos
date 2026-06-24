@@ -7,13 +7,13 @@ namespace MiniChronos
 {
     bool Database::has_path(const std::string& path) const
     {
-        return std::find(begin(all_paths), end(all_paths), path) != end(all_paths);
+        return std::ranges::find(all_paths, path) != end(all_paths);
     }
 
     Database::PathId Database::ensures_path(Database::PathId base_path, const std::string& path)
     {
-        auto full_path = construct_path(base_path, path);
-        auto exists = std::find(begin(all_paths), end(all_paths), full_path);
+        const auto full_path = construct_path(base_path, path);
+        const auto exists = std::ranges::find(all_paths, full_path);
 
         if (exists == end(all_paths))
         {
@@ -28,7 +28,7 @@ namespace MiniChronos
 
     Database::TimerData Database::get_timer_data(const std::string& path) const
     {
-        auto it = std::find(begin(all_paths), end(all_paths), path);
+        const auto it = std::ranges::find(all_paths, path);
         if (it == end(all_paths))
         {
             throw std::out_of_range("get_timer_data: unknown path '" + path + "'");
@@ -71,7 +71,7 @@ namespace MiniChronos
 
     void Database::reset()
     {
-        std::fill(std::begin(all_durations), std::end(all_durations), std::chrono::nanoseconds{});
-        std::fill(std::begin(all_calls), std::end(all_calls), 0);
+        std::ranges::fill(all_durations, std::chrono::nanoseconds{});
+        std::ranges::fill(all_calls, 0);
     }
 }
