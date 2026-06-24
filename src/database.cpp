@@ -59,7 +59,7 @@ namespace MiniChronos
         all_calls[id] += 1;
     }
 
-    std::string Database::construct_path(PathId root_id, const std::string& path)
+    std::string Database::construct_path(PathId root_id, const std::string& path) const
     {
         if (root_id == no_path)
         {

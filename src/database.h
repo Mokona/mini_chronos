@@ -28,7 +28,7 @@ namespace MiniChronos
             explicit TimerIterator(Database* db) : associated_db{db}, count{0} {};
             TimerIterator(Database* db, std::size_t count) : associated_db{db}, count(count){};
 
-            TimerIterator end() const
+            [[nodiscard]] TimerIterator end() const
             {
                 return TimerIterator{associated_db, associated_db->all_paths.size()};
             }
@@ -68,15 +68,15 @@ namespace MiniChronos
         static_assert(std::input_iterator<TimerIterator>);
 
         using PathId = std::size_t;
-        static const PathId no_path = std::numeric_limits<std::size_t>::max();
+        static constexpr PathId no_path = std::numeric_limits<std::size_t>::max();
 
-        bool has_path(const std::string& path) const;
-        PathId ensures_path(Database::PathId base_path, const std::string& path);
+        [[nodiscard]] bool has_path(const std::string& path) const;
+        PathId ensures_path(PathId base_path, const std::string& path);
 
-        void set_duration(Database::PathId, std::chrono::nanoseconds duration);
-        void inc_call_count(Database::PathId id);
-        Database::TimerData get_timer_data(const std::string& path) const;
-        Database::TimerData get_timer_data(Database::PathId path_id) const;
+        void set_duration(PathId, std::chrono::nanoseconds duration);
+        void inc_call_count(PathId id);
+        [[nodiscard]] TimerData get_timer_data(const std::string& path) const;
+        [[nodiscard]] TimerData get_timer_data(Database::PathId path_id) const;
 
         void reset();
 
@@ -85,7 +85,7 @@ namespace MiniChronos
         std::vector<uint32_t> all_calls;
         std::vector<std::chrono::nanoseconds> all_durations;
 
-        std::string construct_path(PathId root_id, const std::string& path);
+        [[nodiscard]] std::string construct_path(PathId root_id, const std::string& path) const;
     };
 
 }

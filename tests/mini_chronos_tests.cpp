@@ -139,7 +139,7 @@ TEST_F(SimpleMiniChronos, end_method_does_not_mutate_iterator)
     chronos.stop();
 
     auto it = chronos.begin();
-    it.end();
+    auto it_end = it.end();
 
     ASSERT_TRUE(it == chronos.begin());
 }

@@ -1,3 +1,6 @@
+#ifndef MINI_CHRONOS_H
+#define MINI_CHRONOS_H
+
 #include "database.h"
 #include "error_handler.h"
 
@@ -8,26 +11,26 @@
 
 namespace MiniChronos
 {
-    template<typename TimeProvider>
-    requires std::chrono::is_clock_v<TimeProvider>
+    template <typename TimeProvider>
+        requires std::chrono::is_clock_v<TimeProvider>
     class Chronos
     {
     public:
         using TimePoint = typename TimeProvider::time_point;
 
-        Database::TimerIterator begin() { return Database::TimerIterator{&db}; }
-        Database::TimerIterator end() { return Database::TimerIterator{&db}.end(); }
+        [[nodiscard]] Database::TimerIterator begin() const { return Database::TimerIterator{&db}; }
+        [[nodiscard]] Database::TimerIterator end() const { return Database::TimerIterator{&db}.end(); }
 
         Chronos(Database& db, ErrorHandler error_handler)
             : db(db), error_handler(std::move(error_handler))
         {
-            const auto no_path = Database::no_path;
+            constexpr auto no_path = Database::no_path;
             path_stack.push_back(no_path);
         }
 
-        void start(std::string timer_id)
+        void start(const std::string& timer_id)
         {
-            auto new_path = db.ensures_path(current_path(), timer_id);
+            const auto new_path = db.ensures_path(current_path(), timer_id);
             push_path(new_path);
 
             // time_start_points is a dense vector as path ids are consecutive
@@ -54,7 +57,7 @@ namespace MiniChronos
             pop_path();
         }
 
-        void reset()
+        void reset() const
         {
             if (current_path() != Database::no_path)
             {
@@ -65,7 +68,7 @@ namespace MiniChronos
             db.reset();
         }
 
-        Database::TimerData get_timer_data(const std::string& path)
+        [[nodiscard]] Database::TimerData get_timer_data(const std::string& path) const
         {
             return db.get_timer_data(path);
         }
@@ -92,6 +95,7 @@ namespace MiniChronos
         }
 
         void push_path(Database::PathId path) { path_stack.push_back(path); }
+
         void pop_path()
         {
             path_stack.pop_back();
@@ -99,3 +103,5 @@ namespace MiniChronos
         }
     };
 }
+
+#endif // MINI_CHRONOS_H
