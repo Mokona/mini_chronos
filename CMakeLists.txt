@@ -6,6 +6,8 @@ project(MiniChronos
         LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Compiling as subproject?
 if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
