@@ -27,10 +27,9 @@ namespace MiniChronos
             explicit TimerIterator(Database* db) : associated_db{db}, count{0} {};
             TimerIterator(Database* db, std::size_t count) : associated_db{db}, count(count){};
 
-            TimerIterator end()
+            TimerIterator end() const
             {
-                count = associated_db->all_paths.size();
-                return *this;
+                return TimerIterator{associated_db, associated_db->all_paths.size()};
             }
 
             TimerIterator& operator++()

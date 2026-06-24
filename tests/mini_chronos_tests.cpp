@@ -104,6 +104,17 @@ TEST_F(SimpleMiniChronos, gets_call_count_from_a_timer)
     ASSERT_THAT(data.calls, Eq(1));
 }
 
+TEST_F(SimpleMiniChronos, end_method_does_not_mutate_iterator)
+{
+    chronos.start("timer_1");
+    chronos.stop();
+
+    auto it = chronos.begin();
+    it.end();
+
+    ASSERT_TRUE(it == chronos.begin());
+}
+
 TEST_F(SimpleMiniChronos, provides_an_iterator_on_one_timer)
 {
     chronos.start("timer_1");
