@@ -39,18 +39,22 @@ namespace MiniChronos
 
     Database::TimerData Database::get_timer_data(Database::PathId path_id)
     {
+        // Hot path: called on every stop(). Assert only — PathId validity is
+        // guaranteed by Chronos which never passes an unregistered id.
         assert(path_id < all_durations.size());
         return TimerData{all_durations[path_id], all_calls[path_id], all_paths[path_id]};
     }
 
     void Database::set_duration(Database::PathId id, std::chrono::nanoseconds duration)
     {
+        // Hot path: called on every stop(). Assert only — see get_timer_data(PathId).
         assert(id < all_durations.size());
         all_durations[id] = duration;
     }
 
     void Database::inc_call_count(Database::PathId id)
     {
+        // Hot path: called on every stop(). Assert only — see get_timer_data(PathId).
         assert(id < all_calls.size());
         all_calls[id] += 1;
     }

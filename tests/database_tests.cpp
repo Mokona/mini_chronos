@@ -35,12 +35,13 @@ TEST(Database, registers_path)
     ASSERT_THAT(db.has_path(pathname), IsTrue());
 }
 
-TEST(Database, get_timer_data_asserts_on_unknown_path)
+TEST(Database, get_timer_data_throws_on_unknown_path)
 {
     MiniChronos::Database db{};
 
     ASSERT_THROW(db.get_timer_data(std::string{"unknown_path"}), std::out_of_range);
 }
+
 
 TEST(Database, registers_path_as_a_hierarchy)
 {
