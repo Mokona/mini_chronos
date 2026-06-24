@@ -94,6 +94,16 @@ TEST_F(SimpleMiniChronos, gets_data_from_a_timer)
     ASSERT_THAT(data.duration, Eq(std::chrono::nanoseconds{1}));
 }
 
+TEST_F(SimpleMiniChronos, gets_call_count_from_a_timer)
+{
+    chronos.start("timer_1");
+    chronos.stop();
+
+    auto data = chronos.get_timer_data("timer_1");
+
+    ASSERT_THAT(data.calls, Eq(1));
+}
+
 TEST_F(SimpleMiniChronos, provides_an_iterator_on_one_timer)
 {
     chronos.start("timer_1");

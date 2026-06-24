@@ -34,13 +34,13 @@ namespace MiniChronos
             throw std::out_of_range("get_timer_data: unknown path '" + path + "'");
         }
         auto position = std::distance(begin(all_paths), it);
-        return TimerData{all_durations[position], 0, all_paths[position]};
+        return TimerData{all_durations[position], all_calls[position], all_paths[position]};
     }
 
     Database::TimerData Database::get_timer_data(Database::PathId path_id)
     {
         assert(path_id < all_durations.size());
-        return TimerData{all_durations[path_id], 0, all_paths[path_id]};
+        return TimerData{all_durations[path_id], all_calls[path_id], all_paths[path_id]};
     }
 
     void Database::set_duration(Database::PathId id, std::chrono::nanoseconds duration)
