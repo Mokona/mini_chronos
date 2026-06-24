@@ -17,9 +17,13 @@ namespace MiniChronos
             std::string name{};
         };
 
-        struct TimerIterator : public std::iterator<std::input_iterator_tag, TimerData, size_t,
-                                                    const TimerData*, TimerData&>
+        struct TimerIterator
         {
+            using iterator_category = std::input_iterator_tag;
+            using value_type        = TimerData;
+            using difference_type   = std::ptrdiff_t;
+            using pointer           = const TimerData*;
+            using reference         = TimerData&;
             explicit TimerIterator(Database* db) : associated_db{db}, count{0} {};
             TimerIterator(Database* db, std::size_t count) : associated_db{db}, count(count){};
 
@@ -60,6 +64,8 @@ namespace MiniChronos
             Database* associated_db;
             std::size_t count;
         };
+
+        static_assert(std::input_iterator<TimerIterator>);
 
         using PathId = std::size_t;
         static const PathId no_path = std::numeric_limits<std::size_t>::max();
