@@ -36,7 +36,10 @@ protected:
 public:
     SimpleMiniChronos()
         : error_handler{{.fatal_error_cb = [](std::string&&) {}}}, chronos{db, error_handler}
-    {}
+    {
+        chrono_mock::now_was_called = false;
+        chrono_mock::fake_duration = chrono_mock::duration{0};
+    }
 
 protected:
     MiniChronos::ErrorHandler error_handler;
@@ -92,9 +95,13 @@ TEST(MiniChronos, cannot_stop_when_not_started)
 
 TEST_F(SimpleMiniChronos, gets_a_timing_when_timer_started)
 {
-    chrono_mock::now_was_called = false;
     chronos.start("timer_1");
     ASSERT_TRUE(chrono_mock::now_was_called);
+}
+
+TEST_F(SimpleMiniChronos, mock_clock_resets_between_tests)
+{
+    ASSERT_THAT(chrono_mock::fake_duration.count(), Eq(0));
 }
 
 TEST_F(SimpleMiniChronos, gets_a_timing_when_timer_stopped)
