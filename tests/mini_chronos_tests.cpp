@@ -115,6 +115,19 @@ TEST_F(SimpleMiniChronos, provides_an_iterator_on_one_timer)
     }
 }
 
+TEST_F(SimpleMiniChronos, post_increment_advances_iterator)
+{
+    chronos.start("timer_1");
+    chronos.stop();
+    chronos.start("timer_2");
+    chronos.stop();
+
+    auto it = chronos.begin();
+    it++;
+
+    ASSERT_THAT((*it).name, Eq("timer_2"));
+}
+
 TEST_F(SimpleMiniChronos, provides_an_iterator_on_two_timers)
 {
     chronos.start("timer_1");

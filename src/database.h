@@ -37,7 +37,7 @@ namespace MiniChronos
                 }
                 return *this;
             };
-            TimerIterator operator++(int) { return TimerIterator{associated_db, count + 1}; };
+            TimerIterator operator++(int) { TimerIterator old = *this; ++(*this); return old; };
 
             bool operator==(TimerIterator other) const
             {
