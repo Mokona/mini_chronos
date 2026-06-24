@@ -5,7 +5,7 @@
 
 namespace MiniChronos
 {
-    bool Database::has_path(const std::string& path)
+    bool Database::has_path(const std::string& path) const
     {
         return std::find(begin(all_paths), end(all_paths), path) != end(all_paths);
     }
@@ -26,7 +26,7 @@ namespace MiniChronos
         return std::distance(begin(all_paths), exists);
     }
 
-    Database::TimerData Database::get_timer_data(const std::string& path)
+    Database::TimerData Database::get_timer_data(const std::string& path) const
     {
         auto it = std::find(begin(all_paths), end(all_paths), path);
         if (it == end(all_paths))
@@ -37,7 +37,7 @@ namespace MiniChronos
         return TimerData{all_durations[position], all_calls[position], all_paths[position]};
     }
 
-    Database::TimerData Database::get_timer_data(Database::PathId path_id)
+    Database::TimerData Database::get_timer_data(Database::PathId path_id) const
     {
         // Hot path: called on every stop(). Assert only — PathId validity is
         // guaranteed by Chronos which never passes an unregistered id.

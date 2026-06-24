@@ -69,13 +69,13 @@ namespace MiniChronos
         using PathId = std::size_t;
         static const PathId no_path = std::numeric_limits<std::size_t>::max();
 
-        bool has_path(const std::string& path);
+        bool has_path(const std::string& path) const;
         PathId ensures_path(Database::PathId base_path, const std::string& path);
 
         void set_duration(Database::PathId, std::chrono::nanoseconds duration);
         void inc_call_count(Database::PathId id);
-        Database::TimerData get_timer_data(const std::string& path);
-        Database::TimerData get_timer_data(Database::PathId path_id);
+        Database::TimerData get_timer_data(const std::string& path) const;
+        Database::TimerData get_timer_data(Database::PathId path_id) const;
 
         void reset();
 
