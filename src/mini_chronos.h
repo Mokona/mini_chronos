@@ -78,11 +78,13 @@ namespace MiniChronos
 
         void reset()
         {
+            /*
             if (current_path() != Database::no_path)
             {
                 error_handler.fatal("Cannot reset. There are still running timers.");
                 return;
             }
+             */
 
             db.reset();
         }
