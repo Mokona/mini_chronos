@@ -70,7 +70,7 @@ namespace MiniChronos
         static constexpr PathId no_path = std::numeric_limits<std::size_t>::max();
 
         [[nodiscard]] bool has_path(const std::string& path) const;
-        PathId ensures_path(PathId base_path, const std::string& path);
+        PathId ensures_path(const std::string& path);
 
         [[nodiscard]] bool is_path_valid(Database::PathId path_id) const;
 
@@ -87,7 +87,6 @@ namespace MiniChronos
         std::vector<uint32_t> all_calls;
         std::vector<std::chrono::nanoseconds> all_durations;
 
-        [[nodiscard]] std::string construct_path(PathId root_id, const std::string& path) const;
     };
 
 }

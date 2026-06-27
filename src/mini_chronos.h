@@ -23,7 +23,7 @@ namespace MiniChronos
 
         Database::PathId create_path(const std::string& timer_id)
         {
-            const auto new_path = db.ensures_path(Database::no_path, timer_id);
+            const auto new_path = db.ensures_path(timer_id);
 
             // timer_start_points is a dense vector as path ids are consecutive
             // and paths are never removed.

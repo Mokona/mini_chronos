@@ -10,14 +10,13 @@ namespace MiniChronos
         return std::ranges::find(all_paths, path) != end(all_paths);
     }
 
-    Database::PathId Database::ensures_path(PathId base_path, const std::string& path)
+    Database::PathId Database::ensures_path(const std::string& path)
     {
-        const auto full_path = construct_path(base_path, path);
-        const auto exists = std::ranges::find(all_paths, full_path);
+        const auto exists = std::ranges::find(all_paths, path);
 
         if (exists == end(all_paths))
         {
-            all_paths.push_back(full_path);
+            all_paths.push_back(path);
             all_durations.resize(all_paths.size());
             all_calls.resize(all_paths.size());
             return all_paths.size() - 1;
@@ -33,7 +32,7 @@ namespace MiniChronos
         {
             throw std::out_of_range("get_timer_data: unknown path '" + path + "'");
         }
-        auto position = std::distance(begin(all_paths), it);
+        const auto position = std::distance(begin(all_paths), it);
         return TimerData{all_durations[position], all_calls[position], all_paths[position]};
     }
 
@@ -57,16 +56,6 @@ namespace MiniChronos
         // Hot path: called on every stop(). Assert only — see get_timer_data(PathId).
         assert(id < all_calls.size());
         all_calls[id] += 1;
-    }
-
-    std::string Database::construct_path(PathId root_id, const std::string& path) const
-    {
-        if (root_id == no_path)
-        {
-            return path;
-        }
-        assert(root_id < all_paths.size());
-        return all_paths[root_id] + "::" + path;
     }
 
     void Database::reset()
