@@ -98,7 +98,7 @@ TEST_F(SimpleMiniChronos, end_method_does_not_mutate_iterator)
     chronos.stop();
 
     auto it = chronos.begin();
-    auto it_end = it.end();
+    static_cast<void>(it.end());
 
     ASSERT_TRUE(it == chronos.begin());
 }
@@ -122,7 +122,7 @@ TEST_F(SimpleMiniChronos, post_increment_advances_iterator)
     chronos.stop();
 
     auto it = chronos.begin();
-    it++;
+    static_cast<void>(it++);
 
     ASSERT_THAT((*it).name, Eq("timer_2"));
 }

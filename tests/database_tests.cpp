@@ -38,9 +38,9 @@ TEST(Database, registers_path)
 
 TEST(Database, get_timer_data_throws_on_unknown_path)
 {
-    MiniChronos::Database db{};
+    const MiniChronos::Database db{};
 
-    ASSERT_THROW(db.get_timer_data(std::string{"unknown_path"}), std::out_of_range);
+    ASSERT_THROW(static_cast<void>(db.get_timer_data("unknown_path")), std::out_of_range);
 }
 
 
@@ -54,7 +54,7 @@ TEST(Database, query_methods_are_callable_on_const_database)
 
     const MiniChronos::Database& const_db = db;
     ASSERT_TRUE(const_db.has_path(pathname));
-    ASSERT_NO_THROW(const_db.get_timer_data(pathname));
+    ASSERT_NO_THROW(static_cast<void>(const_db.get_timer_data(pathname)));
 }
 
 TEST(Database, registers_path_as_a_hierarchy)
