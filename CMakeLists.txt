@@ -49,7 +49,6 @@ set(MINI_CHRONOS_LIB_NAME mini_chronos)
 set(MINI_CHRONOS_LIB_FILES
         src/mini_chronos.h
         src/database.h src/database.cpp
-        src/error_handler.h src/error_handler.cpp
         src/timer.h)
 
 add_library(${MINI_CHRONOS_LIB_NAME} ${MINI_CHRONOS_LIB_FILES})

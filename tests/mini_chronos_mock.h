@@ -27,17 +27,14 @@ struct chrono_mock
 
 struct SimpleMiniChronos : public testing::Test
 {
-protected:
 public:
-    SimpleMiniChronos()
-        : error_handler{{.fatal_error_cb = [](std::string&&) {}}}, chronos{db, error_handler}
+    SimpleMiniChronos() : chronos{db}
     {
         chrono_mock::now_was_called = false;
         chrono_mock::fake_duration = chrono_mock::duration{0};
     }
 
 protected:
-    MiniChronos::ErrorHandler error_handler;
     MiniChronos::Database db;
     MiniChronos::Chronos<chrono_mock> chronos;
 };

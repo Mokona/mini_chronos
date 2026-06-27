@@ -1,60 +1,30 @@
 #include <database.h>
-#include <error_handler.h>
 
 #include "mini_chronos_mock.h"
 
 using namespace testing;
 
 
-TEST_F(SimpleMiniChronos, start_accepts_lvalue_string)
+TEST_F(SimpleMiniChronos, create_path_accepts_lvalue_string)
 {
-    std::string name{"timer_1"};
-    chronos.start(name);
-    chronos.stop();
+    const std::string name{"timer_1"};
+    chronos.create_path(name);
 
     ASSERT_TRUE(db.has_path("timer_1"));
 }
 
-TEST_F(SimpleMiniChronos, start_a_timer_references_it_in_the_db)
+TEST_F(SimpleMiniChronos, create_path_references_it_in_the_db)
 {
-    chronos.start("timer_1");
+    chronos.create_path("timer_1");
 
     ASSERT_TRUE(db.has_path("timer_1"));
     ASSERT_FALSE(db.has_path("timer_2"));
 }
 
-TEST(MiniChronos, fatal_accepts_lvalue_string)
-{
-    using namespace MiniChronos;
-
-    bool error_called = false;
-    ErrorHandler handler{{.fatal_error_cb = [&error_called](std::string&&) { error_called = true; }}};
-
-    std::string reason{"error message"};
-    handler.fatal(reason);
-
-    ASSERT_TRUE(error_called);
-}
-
-TEST(MiniChronos, cannot_stop_when_not_started)
-{
-    using namespace MiniChronos;
-
-    bool error_called = false;
-
-    ErrorHandler error_handler(
-            {.fatal_error_cb = [&error_called](std::string&&) { error_called = true; }});
-    Database db;
-    Chronos<chrono_mock> chronos(db, error_handler);
-
-    ASSERT_FALSE(error_called);
-    chronos.stop();
-    ASSERT_TRUE(error_called);
-}
-
 TEST_F(SimpleMiniChronos, gets_a_timing_when_timer_started)
 {
-    chronos.start("timer_1");
+    const std::size_t t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
     ASSERT_TRUE(chrono_mock::now_was_called);
 }
 
@@ -65,18 +35,20 @@ TEST_F(SimpleMiniChronos, mock_clock_resets_between_tests)
 
 TEST_F(SimpleMiniChronos, gets_a_timing_when_timer_stopped)
 {
-    chronos.start("timer_1");
+    const auto t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
     chrono_mock::now_was_called = false;
-    chronos.stop();
+    chronos.stop(t1);
     ASSERT_TRUE(chrono_mock::now_was_called);
 }
 
 TEST_F(SimpleMiniChronos, gets_data_from_a_timer)
 {
-    chronos.start("timer_1");
-    chronos.stop();
+    const auto t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
+    chronos.stop(t1);
 
-    auto data = chronos.get_timer_data("timer_1");
+    const auto data = chronos.get_timer_data("timer_1");
 
     ASSERT_THAT(data.name, Eq("timer_1"));
     ASSERT_THAT(data.duration, Eq(std::chrono::nanoseconds{1}));
@@ -84,18 +56,20 @@ TEST_F(SimpleMiniChronos, gets_data_from_a_timer)
 
 TEST_F(SimpleMiniChronos, gets_call_count_from_a_timer)
 {
-    chronos.start("timer_1");
-    chronos.stop();
+    const auto t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
+    chronos.stop(t1);
 
-    auto data = chronos.get_timer_data("timer_1");
+    const auto data = chronos.get_timer_data("timer_1");
 
     ASSERT_THAT(data.calls, Eq(1));
 }
 
 TEST_F(SimpleMiniChronos, end_method_does_not_mutate_iterator)
 {
-    chronos.start("timer_1");
-    chronos.stop();
+    const auto t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
+    chronos.stop(t1);
 
     auto it = chronos.begin();
     static_cast<void>(it.end());
@@ -105,8 +79,9 @@ TEST_F(SimpleMiniChronos, end_method_does_not_mutate_iterator)
 
 TEST_F(SimpleMiniChronos, provides_an_iterator_on_one_timer)
 {
-    chronos.start("timer_1");
-    chronos.stop();
+    const auto t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
+    chronos.stop(t1);
 
     for (const auto& timer : chronos)
     {
@@ -116,10 +91,12 @@ TEST_F(SimpleMiniChronos, provides_an_iterator_on_one_timer)
 
 TEST_F(SimpleMiniChronos, post_increment_advances_iterator)
 {
-    chronos.start("timer_1");
-    chronos.stop();
-    chronos.start("timer_2");
-    chronos.stop();
+    const auto t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
+    chronos.stop(t1);
+    const auto t2 = chronos.create_path("timer_2");
+    chronos.start(t2);
+    chronos.stop(t2);
 
     auto it = chronos.begin();
     static_cast<void>(it++);
@@ -129,10 +106,12 @@ TEST_F(SimpleMiniChronos, post_increment_advances_iterator)
 
 TEST_F(SimpleMiniChronos, provides_an_iterator_on_two_timers)
 {
-    chronos.start("timer_1");
-    chronos.stop();
-    chronos.start("timer_2");
-    chronos.stop();
+    const auto t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
+    chronos.stop(t1);
+    const auto t2 = chronos.create_path("timer_2");
+    chronos.start(t2);
+    chronos.stop(t2);
 
     std::vector<MiniChronos::Database::TimerData> timers;
     std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
@@ -146,10 +125,13 @@ TEST_F(SimpleMiniChronos, provides_an_iterator_on_two_timers)
 
 TEST_F(SimpleMiniChronos, creates_a_hierarchy_of_timers)
 {
-    chronos.start("timer_1");
-    chronos.start("timer_2");
-    chronos.stop();
-    chronos.stop();
+    const auto t1 = chronos.create_path("timer_1");
+    const auto t2 = chronos.create_path("timer_1::timer_2");
+
+    chronos.start(t1);
+    chronos.start(t2);
+    chronos.stop(t2);
+    chronos.stop(t1);
 
     std::vector<MiniChronos::Database::TimerData> timers;
     std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
@@ -167,10 +149,11 @@ TEST_F(SimpleMiniChronos, creates_a_hierarchy_of_timers)
 
 TEST_F(SimpleMiniChronos, accumulates_time_from_calls)
 {
-    chronos.start("timer_1");
-    chronos.stop();
-    chronos.start("timer_1");
-    chronos.stop();
+    const auto t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
+    chronos.stop(t1);
+    chronos.start(t1);
+    chronos.stop(t1);
 
     std::vector<MiniChronos::Database::TimerData> timers;
     std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
@@ -182,8 +165,9 @@ TEST_F(SimpleMiniChronos, accumulates_time_from_calls)
 
 TEST_F(SimpleMiniChronos, count_number_of_calls)
 {
-    chronos.start("timer_1");
-    chronos.stop();
+    const auto t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
+    chronos.stop(t1);
 
     std::vector<MiniChronos::Database::TimerData> timers;
     std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
@@ -195,15 +179,16 @@ TEST_F(SimpleMiniChronos, count_number_of_calls)
 
 TEST_F(SimpleMiniChronos, can_reset_calls_and_time_accumulation)
 {
-    chronos.start("timer_1");
-    chronos.stop();
+    const auto t1 = chronos.create_path("timer_1");
+    chronos.start(t1);
+    chronos.stop(t1);
 
     chronos.reset();
 
-    chronos.start("timer_1");
-    chronos.stop();
-    chronos.start("timer_1");
-    chronos.stop();
+    chronos.start(t1);
+    chronos.stop(t1);
+    chronos.start(t1);
+    chronos.stop(t1);
 
     std::vector<MiniChronos::Database::TimerData> timers;
     std::copy(std::begin(chronos), std::end(chronos), std::back_inserter(timers));
